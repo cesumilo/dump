@@ -46,6 +46,7 @@ map('n', '<leader>ff', '<cmd>Telescope find_files<cr>')
 map('n', '<leader>fg', '<cmd>Telescope live_grep<cr>')
 map('n', '<leader>fb', '<cmd>Telescope buffers<cr>')
 map('n', '<leader>fh', '<cmd>Telescope help_tags<cr>')
+map('n', '<S-k>', vim.lsp.buf.hover) -- display symbol doc on cursor
 
 -- set color scheme
 -- colorscheme catppuccin  catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
@@ -127,13 +128,20 @@ cmp.setup.cmdline(':', {
 -- deno
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 vim.g.markdown_fenced_languages = {
-  "ts=typescript"
+  "ts=typescript",
+  "rs=rust"
 }
 
 local nvim_lsp = require('lspconfig')
 nvim_lsp.denols.setup {
   on_attach = on_attach,
   root_dir = nvim_lsp.util.root_pattern("deno.json", "deno.jsonc"),
+  capabilities = capabilities
+}
+
+-- Rust
+nvim_lsp.rust_analyzer.setup{
+  root_dir = nvim_lsp.util.root_pattern("Cargo.toml", "rust-project.json"),
   capabilities = capabilities
 }
 
@@ -145,7 +153,8 @@ map('n', '<D-/>', '<cmd>CommentToggle<cr>')
 require("conform").setup({
   formatters_by_ft = {
     typescript = { "deno fmt" },
-    javascript = { "deno fmt" }
+    javascript = { "deno fmt" },
+    rust = { "rustfmt" },
   },
   format_on_save = {
     -- These options will be passed to conform.format()
