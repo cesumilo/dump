@@ -152,8 +152,6 @@ map('n', '<D-/>', '<cmd>CommentToggle<cr>')
 -- Format
 require("conform").setup({
   formatters_by_ft = {
-    typescript = { "deno fmt" },
-    javascript = { "deno fmt" },
     rust = { "rustfmt" },
   },
   format_on_save = {
