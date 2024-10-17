@@ -1,39 +1,7 @@
+require("config.lazy")
+
 -- Note: <D- is mapped to cmd key
-local Plug = vim.fn['plug#']
-
-vim.call('plug#begin')
-
--- Fuzzy finder
-Plug('nvim-lua/plenary.nvim')
-Plug('nvim-telescope/telescope.nvim', { tag='0.1.8' })
-
--- Theme
-Plug('catppuccin/nvim', { as='catppuccin' })
-
--- LSP
-Plug('neovim/nvim-lspconfig')
-
--- Debugging
-Plug('puremourning/vimspector')
-
--- Completion
-Plug('hrsh7th/cmp-nvim-lsp')
-Plug('hrsh7th/cmp-buffer')
-Plug('hrsh7th/cmp-path')
-Plug('hrsh7th/cmp-cmdline')
-Plug('hrsh7th/nvim-cmp')
-
--- Commenter
-Plug('terrortylor/nvim-comment')
-
--- Formatter
-Plug('stevearc/conform.nvim')
-
--- Todos
-Plug('folke/todo-comments.nvim')
-
-vim.call('plug#end')
-
+--
 -- Mapping function
 local function map(mode, lhs, rhs, opts)
 local options = {noremap = true}
@@ -42,10 +10,10 @@ local options = {noremap = true}
 end
 
 -- Find files using Telescope command-line sugar.
-map('n', '<leader>ff', '<cmd>Telescope find_files<cr>')
-map('n', '<leader>fg', '<cmd>Telescope live_grep<cr>')
-map('n', '<leader>fb', '<cmd>Telescope buffers<cr>')
-map('n', '<leader>fh', '<cmd>Telescope help_tags<cr>')
+map('n', '<D-f>', '<cmd>Telescope find_files<cr>')
+map('n', '<D-g>', '<cmd>Telescope live_grep<cr>')
+map('n', '<D-b>', '<cmd>Telescope buffers<cr>')
+map('n', '<D-h>', '<cmd>Telescope help_tags<cr>')
 map('n', '<S-k>', vim.lsp.buf.hover) -- display symbol doc on cursor
 
 -- set color scheme
@@ -146,14 +114,11 @@ nvim_lsp.rust_analyzer.setup{
 }
 
 -- Setup Commenter
-require('nvim_comment').setup()
 map('n', '<D-/>', '<cmd>CommentToggle<cr>')
 
 -- Format
 require("conform").setup({
   formatters_by_ft = {
-    typescript = { "deno fmt" },
-    javascript = { "deno fmt" },
     rust = { "rustfmt" },
   },
   format_on_save = {
@@ -162,6 +127,3 @@ require("conform").setup({
     lsp_format = "fallback",
   },
 })
-
--- Todos
-require("todo-comments").setup {}
