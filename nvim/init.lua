@@ -117,13 +117,50 @@ nvim_lsp.rust_analyzer.setup{
 map('n', '<D-/>', '<cmd>CommentToggle<cr>')
 
 -- Format
-require("conform").setup({
-  formatters_by_ft = {
-    rust = { "rustfmt" },
+map('n', '<leader>ff', '<cmd>Neoformat<cr>')
+
+-- C#
+vim.g.OmniSharp_server_use_net6 = 1
+
+nvim_lsp.omnisharp.setup({
+  capabilities = capabilities,
+  handlers = {
+    ["textDocument/definition"] = require("omnisharp_extended").handler,
   },
-  format_on_save = {
-    -- These options will be passed to conform.format()
-    timeout_ms = 500,
-    lsp_format = "fallback",
-  },
+  cmd = { "dotnet", "/Users/cesumilo/.bin/omnisharp-osx-x64-net6.0/OmniSharp.dll" },
+  
+  -- Enables support for reading code style, naming convention and analyzer
+  -- settings from .editorconfig.
+  enable_editorconfig_support = true,
+  
+  -- If true, MSBuild project system will only load projects for files that
+  -- were opened in the editor. This setting is useful for big C# codebases
+  -- and allows for faster initialization of code navigation features only
+  -- for projects that are relevant to code that is being edited. With this
+  -- setting enabled OmniSharp may load fewer projects and may thus display
+  -- incomplete reference lists for symbols.
+  enable_ms_build_load_projects_on_demand = false, -- default false
+  
+  -- Enables support for roslyn analyzers, code fixes and rulesets.
+  enable_roslyn_analyzers = true, -- default false
+  
+  -- Specifies whether 'using' directives should be grouped and sorted during
+  -- document formatting.
+  organize_imports_on_format = true, -- default false
+  
+  -- Enables support for showing unimported types and unimported extension
+  -- methods in completion lists. When committed, the appropriate using
+  -- directive will be added at the top of the current file. This option can
+  -- have a negative impact on initial completion responsiveness,
+  -- particularly for the first few completion sessions after opening a
+  -- solution.
+  enable_import_completion = true, -- default false
+  
+  -- Specifies whether to include preview versions of the .NET SDK when
+  -- determining which version to use for project loading.
+  sdk_include_prereleases = true,
+  
+  -- Only run analyzers against open files when 'enableRoslynAnalyzers' is
+  -- true
+  analyze_open_documents_only = true, -- default false
 })
