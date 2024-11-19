@@ -188,3 +188,10 @@ configs.setup {
     -- termcolors = {} -- table of colour name strings
   }
 }
+
+-- Format on save
+vim.api.nvim_create_autocmd('BufWritePre', {
+    group = vim.api.nvim_create_augroup('FormatOnSave', { clear = true }),
+    pattern = { "*" },
+    command = "Neoformat",
+})
