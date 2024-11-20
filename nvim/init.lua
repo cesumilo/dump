@@ -1,4 +1,14 @@
+local HOME = os.getenv("HOME")
 require("config.lazy")
+
+
+-- Use spaces instead of tabs
+local set = vim.opt -- set options
+set.tabstop = 2
+set.softtabstop = 2
+set.shiftwidth = 2
+set.expandtab = true
+set.autoindent = true
 
 -- Note: <D- is mapped to cmd key
 --
@@ -26,6 +36,10 @@ map('t', '<Esc>', '<C-\\><C-n>')
 -- hybrid line number
 vim.cmd.set('number', 'relativenumber')
 vim.cmd.set('nu', 'rnu')
+
+-- mason
+require("mason").setup()
+require("mason-lspconfig").setup()
 
 -- Set up nvim-cmp.
 local cmp = require('cmp')
@@ -117,7 +131,7 @@ nvim_lsp.rust_analyzer.setup{
 map('n', '<D-/>', '<cmd>CommentToggle<cr>')
 
 -- Format
-map('n', '<leader>ff', '<cmd>Neoformat<cr>')
+map('n', '<Shift-f>', '<cmd>Neoformat<cr>')
 
 -- C#
 vim.g.OmniSharp_server_use_net6 = 1
@@ -127,7 +141,7 @@ nvim_lsp.omnisharp.setup({
   handlers = {
     ["textDocument/definition"] = require("omnisharp_extended").handler,
   },
-  cmd = { "dotnet", "/Users/cesumilo/.bin/omnisharp-osx-x64-net6.0/OmniSharp.dll" },
+  cmd = { "dotnet", HOME .. "/.bin/omnisharp-osx-x64-net6.0/OmniSharp.dll" },
   
   -- Enables support for reading code style, naming convention and analyzer
   -- settings from .editorconfig.
@@ -195,3 +209,105 @@ vim.api.nvim_create_autocmd('BufWritePre', {
     pattern = { "*" },
     command = "Neoformat",
 })
+
+-- nvim-dap
+require("dapui").setup()
+local dap, dapui = require("dap"), require("dapui")
+
+dap.listeners.before.attach.dapui_config = function()
+  dapui.open()
+end
+dap.listeners.before.launch.dapui_config = function()
+  dapui.open()
+end
+dap.listeners.before.event_terminated.dapui_config = function()
+  dapui.close()
+end
+dap.listeners.before.event_exited.dapui_config = function()
+  dapui.close()
+end
+
+map('n', '<C-b>', "<cmd>lua require'dap'.toggle_breakpoint()<cr>")
+map('n', '<C-d>', "<cmd>lua require'dap'.continue()<cr>")
+map('n', '<C-n>', "<cmd>lua require'dap'.step_over()<cr>")
+map('n', '<C-m>', "<cmd>lua require'dap'.step_into()<cr>")
+map('n', '<C-i>', "<cmd>lua require'dap'.repl.open()<cr>")
+
+
+-- nvim-dap rust
+-- Use mason to install codelldb and cpptools (:MasonInstall codelldb cpptools)
+local dap = require('dap')
+dap.adapters.lldb = {
+  id = 'lldb',
+  type = "server",
+  port = "${port}",
+  executable = {
+    command = HOME .. '/.local/share/nvim/mason/bin/codelldb',
+    args = { "--port", "${port}" },
+    detached = vim.loop.os_uname().sysname ~= "Windows",
+  }
+}
+dap.configurations.rust = {
+  {
+    name = "Launch file",
+    type = "lldb",
+    request = "launch",
+    program = function()
+      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+    end,
+    cwd = '${workspaceFolder}',
+    stopAtEntry = false,
+    initCommands = function()
+      -- Find out where to look for the pretty printer Python module
+      local rustc_sysroot = vim.fn.trim(vim.fn.system('rustc --print sysroot'))
+
+      local script_import = 'command script import "' .. rustc_sysroot .. '/lib/rustlib/etc/lldb_lookup.py"'
+      local commands_file = rustc_sysroot .. '/lib/rustlib/etc/lldb_commands'
+
+      local commands = {}
+      local file = io.open(commands_file, 'r')
+      if file then
+        for line in file:lines() do
+          table.insert(commands, line)
+        end
+        file:close()
+      end
+      table.insert(commands, 1, script_import)
+
+      return commands
+    end,
+  },
+}
+
+-- nvim-dap js/deno
+-- Use mason to install js-debug-adapter (:MasonInstall js-debug-adapter)
+require("dap").adapters["pwa-node"] = {
+  type = "server",
+  host = "localhost",
+  port = "${port}",
+  executable = {
+    command = HOME .. "/.local/share/nvim/mason/bin/js-debug-adapter",
+    -- 💀 Make sure to update this path to point to your installation
+    args = {"${port}"},
+  }
+}
+dap.configurations.typescript = {
+  {
+    type = 'pwa-node',
+    request = 'launch',
+    name = "Launch file",
+    runtimeExecutable = "deno",
+    runtimeArgs = {
+      "run",
+      "--inspect-wait",
+      "--allow-all"
+    },
+    program = "${file}",
+    cwd = "${workspaceFolder}",
+    attachSimplePort = 9229,
+  },
+}
+
+-- nvim-dap-projects
+-- Setup nvim-dap per project using root/.nvim-dap.lua
+require("nvim-dap-projects").search_project_config()
