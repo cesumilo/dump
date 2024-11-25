@@ -334,7 +334,6 @@ local smart_pick_process = function(dap_utils, project_path)
         -- matches program ran in debug from the editor
         return true
       end
-      print(proc.name)
     end
 
     return false
