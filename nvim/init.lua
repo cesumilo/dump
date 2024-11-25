@@ -311,19 +311,62 @@ dap.configurations.typescript = {
   },
 }
 
+
 -- nvim-dap godot
 -- Use mason to install netcoredbg
-dap.adapters.godot = {
-  type = 'server',
-  request = 'launch',
-  port = 6007
+
+local dap_utils = require("dap.utils")
+
+--- Attempts to pick a process smartly.
+---
+--- Does the following:
+--- 1. Gets all project files
+--- 2. Build filter
+--- 2a. If a single project is found then will filter for processes ending with project name.
+--- 2b. If multiple projects found then will filter for processes ending with any of the project file names.
+--- 2c. If no project files found then will filter for processes starting with "dotnet"
+--- 3. If a single process matches then auto selects it. If multiple found then displays it user for selection.
+local smart_pick_process = function(dap_utils, project_path)
+  local filter = function(proc)
+    if string.find(proc.name, "Godot") then
+      -- matches Godot process names
+      if string.find(proc.name, "--remote") then
+        -- matches program ran in debug from the editor
+        return true
+      end
+      print(proc.name)
+    end
+
+    return false
+  end
+
+  local processes = dap_utils.get_processes()
+  processes = vim.tbl_filter(filter, processes)
+
+  if #processes == 0 then
+    print("No dotnet processes could be found automatically. Try 'Attach' instead")
+    return
+  end
+
+  return processes[1].pid
+end
+
+dap.adapters.coreclr = {
+  type = 'executable',
+  command = HOME .. "/.local/share/nvim/mason/bin/netcoredbg",
+  args = {'--interpreter=vscode'}
 }
 dap.configurations.cs = {
   {
-    type = "godot",
-    request = "launch",
-    name = "Launch scene",
-    project = "${workspaceFolder}",
+    type = "coreclr",
+    name = "Attach (Smart)",
+    request = "attach",
+    -- processId = 18706
+    -- processId = require('dap.utils').pick_process
+    processId = function()
+      local current_working_dir = vim.fn.getcwd()
+      return smart_pick_process(dap_utils, current_working_dir) or dap.ABORT
+    end,
   }
 }
 
