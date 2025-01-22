@@ -25,6 +25,7 @@ map('n', '<D-g>', '<cmd>Telescope live_grep<cr>')
 map('n', '<D-b>', '<cmd>Telescope buffers<cr>')
 map('n', '<D-h>', '<cmd>Telescope help_tags<cr>')
 map('n', '<S-k>', vim.lsp.buf.hover) -- display symbol doc on cursor
+map('n', 'E', vim.diagnostic.open_float) -- open diagnostic error
 
 -- set color scheme
 -- colorscheme catppuccin  catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
@@ -117,15 +118,18 @@ vim.g.markdown_fenced_languages = {
 local nvim_lsp = require('lspconfig')
 nvim_lsp.denols.setup {
   on_attach = on_attach,
-  root_dir = nvim_lsp.util.root_pattern("deno.json", "deno.jsonc"),
+  root_dir = nvim_lsp.util.root_pattern("deno.json", "deno.jsonc", "test.ts"),
   capabilities = capabilities
 }
 
 -- Rust
-nvim_lsp.rust_analyzer.setup{
+nvim_lsp.rust_analyzer.setup {
   root_dir = nvim_lsp.util.root_pattern("Cargo.toml", "rust-project.json"),
   capabilities = capabilities
 }
+
+-- Python
+nvim_lsp.pyright.setup{}
 
 -- Setup Commenter
 map('n', '<D-/>', '<cmd>CommentToggle<cr>')
@@ -209,7 +213,7 @@ configs.setup {
 -- Format on save
 vim.api.nvim_create_autocmd('BufWritePre', {
     group = vim.api.nvim_create_augroup('FormatOnSave', { clear = true }),
-    pattern = { "*" },
+    pattern = { "*.ts", "*.rs", "*.py", "*.js", "*.json", "*.yaml", "*.yml", "*.lua" },
     command = "Neoformat",
 })
 

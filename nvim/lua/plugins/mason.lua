@@ -10,6 +10,9 @@ return {
         "codelldb",
         "cpptools",
         "js-debug-adapter",
+        "pyright",
+        "pylint",
+        "black"
       }
     end,
   }
