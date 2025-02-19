@@ -26,6 +26,7 @@ map('n', '<D-b>', '<cmd>Telescope buffers<cr>')
 map('n', '<D-h>', '<cmd>Telescope help_tags<cr>')
 map('n', '<S-k>', vim.lsp.buf.hover) -- display symbol doc on cursor
 map('n', 'E', vim.diagnostic.open_float) -- open diagnostic error
+map('n', 'F', vim.lsp.buf.declaration) -- go to definition
 
 -- set color scheme
 -- colorscheme catppuccin  catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
