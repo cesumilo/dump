@@ -26,6 +26,8 @@ map('n', '<D-b>', '<cmd>Telescope buffers<cr>')
 map('n', '<D-h>', '<cmd>Telescope help_tags<cr>')
 map('n', '<S-k>', vim.lsp.buf.hover) -- display symbol doc on cursor
 map('n', 'E', vim.diagnostic.open_float) -- open diagnostic error
+map('n', 'gf', vim.lsp.buf.declaration) -- go to declaration
+map('n', 'gd', vim.lsp.buf.definition) -- go to definition
 
 -- set color scheme
 -- colorscheme catppuccin  catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
@@ -191,7 +193,7 @@ local configs = require("nvim-treesitter.configs")
 
 configs.setup {
   -- Add a language of your choice
-  ensure_installed = {"lua", "javascript", "typescript", "rust", "go", "terraform", "json", "c_sharp"},
+  ensure_installed = {"lua", "javascript", "typescript", "rust", "go", "terraform", "json", "c_sharp", "dart"},
   sync_install = false,
   ignore_install = { "" }, -- List of parsers to ignore installing
   highlight = {
@@ -213,7 +215,7 @@ configs.setup {
 -- Format on save
 vim.api.nvim_create_autocmd('BufWritePre', {
     group = vim.api.nvim_create_augroup('FormatOnSave', { clear = true }),
-    pattern = { "*.ts", "*.rs", "*.py", "*.js", "*.json", "*.yaml", "*.yml", "*.lua" },
+    pattern = { "*.ts", "*.rs", "*.py", "*.js", "*.json", "*.yaml", "*.yml", "*.lua", "*.dart" },
     command = "Neoformat",
 })
 
@@ -373,6 +375,21 @@ dap.configurations.cs = {
   }
 }
 
+-- dart / flutter
+
+nvim_lsp.dartls.setup {
+  on_attach = on_attach,
+  settings = {
+    dart = {
+      analysisExcludedFolders = {
+        vim.fn.expand("$HOME/AppData/Local/Pub/Cache"),
+        vim.fn.expand("$HOME/.pub-cache"),
+        vim.fn.expand("/opt/homebrew"),
+        vim.fn.expand("$HOME/.flutter/flutter"),
+      }
+    }
+  }
+}
 
 -- nvim-dap-projects
 -- Setup nvim-dap per project using root/.nvim-dap.lua
