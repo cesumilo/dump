@@ -17,7 +17,7 @@ return {
         "netcoredbg",
         "omnisharp",
         "rust-analyzer",
-        "csharpier"
+        "csharpier",
         "jdtls",
         "kotlin-language-server",
         "sqlls",
