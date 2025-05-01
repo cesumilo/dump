@@ -1,7 +1,6 @@
 local HOME = os.getenv("HOME")
 require("config.lazy")
 
-
 -- Use spaces instead of tabs
 local set = vim.opt -- set options
 set.tabstop = 2
@@ -23,7 +22,7 @@ end
 map('n', '<D-f>', '<cmd>Telescope find_files<cr>')
 map('n', '<D-g>', '<cmd>Telescope live_grep<cr>')
 map('n', '<D-b>', '<cmd>Telescope buffers<cr>')
-map('n', '<D-h>', '<cmd>Telescope help_tags<cr>')
+-- map('n', '<D-h>', '<cmd>Telescope help_tags<cr>')
 map('n', '<S-k>', vim.lsp.buf.hover) -- display symbol doc on cursor
 map('n', 'E', vim.diagnostic.open_float) -- open diagnostic error
 map('n', 'gf', vim.lsp.buf.declaration) -- go to declaration
@@ -188,12 +187,18 @@ nvim_lsp.omnisharp.setup {
   },
 }
 
+-- Gradle and shit
+nvim_lsp.jdtls.setup {}
+
+-- Terraform
+nvim_lsp.terraformls.setup{}
+
 -- Treesitter
 local configs = require("nvim-treesitter.configs")
 
 configs.setup {
   -- Add a language of your choice
-  ensure_installed = {"lua", "javascript", "typescript", "rust", "go", "terraform", "json", "c_sharp", "dart"},
+  ensure_installed = {"lua", "javascript", "typescript", "rust", "go", "terraform", "json", "c_sharp", "dart", "sql"},
   sync_install = false,
   ignore_install = { "" }, -- List of parsers to ignore installing
   highlight = {
@@ -215,32 +220,32 @@ configs.setup {
 -- Format on save
 vim.api.nvim_create_autocmd('BufWritePre', {
     group = vim.api.nvim_create_augroup('FormatOnSave', { clear = true }),
-    pattern = { "*.ts", "*.rs", "*.py", "*.js", "*.json", "*.yaml", "*.yml", "*.lua", "*.dart" },
-    command = "Neoformat",
+    pattern = { "*.ts", "*.rs", "*.py", "*.js", "*.json", "*.yaml", "*.yml", "*.lua", "*.dart", "*.sql", "*.lua", "*.tf", "*.tfvars" },
+    command = "silent Neoformat",
 })
 
 -- nvim-dap
-require("dapui").setup()
-local dap, dapui = require("dap"), require("dapui")
-
-dap.listeners.before.attach.dapui_config = function()
-  dapui.open()
-end
-dap.listeners.before.launch.dapui_config = function()
-  dapui.open()
-end
-dap.listeners.before.event_terminated.dapui_config = function()
-  dapui.close()
-end
-dap.listeners.before.event_exited.dapui_config = function()
-  dapui.close()
-end
-
-map('n', '<C-b>', "<cmd>lua require'dap'.toggle_breakpoint()<cr>")
-map('n', '<C-d>', "<cmd>lua require'dap'.continue()<cr>")
-map('n', '<C-n>', "<cmd>lua require'dap'.step_over()<cr>")
-map('n', '<C-m>', "<cmd>lua require'dap'.step_into()<cr>")
-map('n', '<C-i>', "<cmd>lua require'dap'.repl.open()<cr>")
+-- Note: something is broken...
+-- local dap, dapui = require("dap"), require("dapui")
+-- 
+-- dap.listeners.before.attach.dapui_config = function()
+--   dapui.open()
+-- end
+-- dap.listeners.before.launch.dapui_config = function()
+--   dapui.open()
+-- end
+-- dap.listeners.before.event_terminated.dapui_config = function()
+--   dapui.close()
+-- end
+-- dap.listeners.before.event_exited.dapui_config = function()
+--   dapui.close()
+-- end
+-- 
+-- map('n', '<C-b>', "<cmd>lua require'dap'.toggle_breakpoint()<cr>")
+-- map('n', '<C-d>', "<cmd>lua require'dap'.continue()<cr>")
+-- map('n', '<C-n>', "<cmd>lua require'dap'.step_over()<cr>")
+-- map('n', '<C-m>', "<cmd>lua require'dap'.step_into()<cr>")
+-- map('n', '<C-i>', "<cmd>lua require'dap'.repl.open()<cr>")
 
 
 -- nvim-dap rust
@@ -376,7 +381,6 @@ dap.configurations.cs = {
 }
 
 -- dart / flutter
-
 nvim_lsp.dartls.setup {
   on_attach = on_attach,
   settings = {
@@ -394,3 +398,38 @@ nvim_lsp.dartls.setup {
 -- nvim-dap-projects
 -- Setup nvim-dap per project using root/.nvim-dap.lua
 require("nvim-dap-projects").search_project_config()
+
+-- Header generation
+require("header").setup({
+    file_name = true,
+    author = "Guillaume Robin (contact@gdream.dev)",
+    project = nil,
+    date_created = true,
+    date_created_fmt = "%Y-%m-%d %H:%M:%S",
+    date_modified = true,
+    date_modified_fmt = "%Y-%m-%d %H:%M:%S",
+    line_separator = "------",
+    copyright_text = nil,
+})
+
+-- Auto add header when saving file
+local augroup = vim.api.nvim_create_augroup
+local autocmd = vim.api.nvim_create_autocmd
+
+augroup("AddHeader", { clear = true })
+
+autocmd("BufWritePre", {
+    pattern = "*",
+    callback = function()
+        local header = require("header")
+        if header and header.update_date_modified then
+            header.update_date_modified()
+        else
+            vim.notify_once("header.update_date_modified is not available", vim.log.levels.WARN)
+        end
+    end,
+    group = "AddHeader",
+    desc = "Update header's date modified",
+})
+
+map('n', 'X', '<cmd>AddHeader<cr>')

@@ -12,7 +12,16 @@ return {
         "js-debug-adapter",
         "pyright",
         "pylint",
-        "black"
+        "black",
+        "csharpier",
+        "netcoredbg",
+        "omnisharp",
+        "rust-analyzer",
+        "csharpier"
+        "jdtls",
+        "kotlin-language-server",
+        "sqlls",
+        "terraform-ls"
       }
     end,
   }
