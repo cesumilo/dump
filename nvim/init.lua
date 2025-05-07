@@ -51,6 +51,7 @@ require("mason-lspconfig").setup({
 		"pyright",
 		"sqlls",
 		"terraformls",
+		"lua_ls",
 	},
 })
 require("mason-tool-installer").setup({
