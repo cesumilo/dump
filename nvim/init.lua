@@ -52,6 +52,8 @@ require("mason-lspconfig").setup({
 		"sqlls",
 		"terraformls",
 		"lua_ls",
+		"denols",
+		"ts_ls",
 	},
 })
 require("mason-tool-installer").setup({
@@ -192,7 +194,7 @@ vim.g.markdown_fenced_languages = {
 local nvim_lsp = require("lspconfig")
 nvim_lsp.denols.setup({
 	on_attach = on_attach,
-	root_dir = nvim_lsp.util.root_pattern("deno.json", "deno.jsonc", "test.ts"),
+	root_dir = nvim_lsp.util.root_pattern({ "deno.json", "deno.jsonc", "test.ts" }),
 	capabilities = capabilities,
 })
 
@@ -259,6 +261,11 @@ nvim_lsp.omnisharp.setup({
 		},
 	},
 })
+
+-- Typescript
+if not vim.fs.root(0, { "deno.json", "deno.jsonc" }) then
+	nvim_lsp.ts_ls.setup({})
+end
 
 -- Gradle and shit
 nvim_lsp.jdtls.setup({})
