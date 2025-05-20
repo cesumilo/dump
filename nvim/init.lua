@@ -192,11 +192,14 @@ vim.g.markdown_fenced_languages = {
 }
 
 local nvim_lsp = require("lspconfig")
-nvim_lsp.denols.setup({
-	on_attach = on_attach,
-	root_dir = nvim_lsp.util.root_pattern({ "deno.json", "deno.jsonc", "test.ts" }),
-	capabilities = capabilities,
-})
+
+if vim.fs.root(0, { "deno.json", "deno.jsonc" }) then
+	nvim_lsp.denols.setup({
+		on_attach = on_attach,
+		root_dir = nvim_lsp.util.root_pattern({ "deno.json", "deno.jsonc" }),
+		capabilities = capabilities,
+	})
+end
 
 -- Rust
 nvim_lsp.rust_analyzer.setup({
