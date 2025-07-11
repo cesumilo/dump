@@ -539,3 +539,6 @@ autocmd("BufWritePre", {
 })
 
 map("n", "X", "<cmd>AddHeader<cr>")
+
+-- Identation guidelines
+require("ibl").setup()
