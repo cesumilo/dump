@@ -14,7 +14,7 @@ map("n", "<D-g>", "<cmd>Telescope live_grep<cr>")
 map("n", "<D-b>", "<cmd>Telescope buffers<cr>")
 
 -- LSP
-map("n", "<S-k>", vim.lsp.buf.hover) -- display symbol doc on cursor
+-- map("n", "<S-k>", vim.lsp.buf.hover) -- display symbol doc on cursor
 map("n", "E", vim.diagnostic.open_float) -- open diagnostic error
 map("n", "gf", vim.lsp.buf.declaration) -- go to declaration
 map("n", "gd", vim.lsp.buf.definition) -- go to definition
