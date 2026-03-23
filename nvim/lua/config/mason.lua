@@ -6,6 +6,7 @@ require("mason-lspconfig").setup({
 		"terraformls",
 		"pyright",
 		"rust_analyzer",
+		"omnisharp",
 	},
 })
 require("mason-tool-installer").setup({
@@ -17,6 +18,7 @@ require("mason-tool-installer").setup({
 		"pylint",
 		"black",
 		"stylua",
+		"netcoredbg",
 	},
 	auto_update = false,
 	run_on_start = true,
