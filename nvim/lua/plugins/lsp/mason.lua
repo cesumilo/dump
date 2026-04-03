@@ -80,12 +80,13 @@ return {
 					vim.keymap.set("n", "gi", require("omnisharp_extended").lsp_implementation, opts)
 				end
 
-				-- 0.11: native completion (no nvim-cmp needed)
-				if client and client:supports_method("textDocument/completion") then
-					vim.lsp.completion.enable(true, client.id, ev.buf, {
-						autotrigger = true,
-					})
-				end
+				-- NOTE: Native LSP completion is DISABLED because we're using blink.cmp
+				-- If you want to use native completion instead of blink.cmp, uncomment below:
+				-- if client and client:supports_method("textDocument/completion") then
+				-- 	vim.lsp.completion.enable(true, client.id, ev.buf, {
+				-- 		autotrigger = true,
+				-- 	})
+				-- end
 			end,
 		})
 	end,

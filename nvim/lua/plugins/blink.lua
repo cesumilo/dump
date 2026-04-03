@@ -25,7 +25,13 @@ return {
 		-- C-k: Toggle signature help (if signature.enabled = true)
 		--
 		-- See :h blink-cmp-config-keymap for defining your own keymap
-		keymap = { preset = "super-tab" },
+		keymap = {
+			preset = "super-tab",
+			-- Explicitly prevent <CR> from accepting completion
+			-- This fixes the issue where typing '.' auto-inserts the first completion
+			["<CR>"] = {},
+			["<Tab>"] = { "select_and_accept" },
+		},
 
 		appearance = {
 			-- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
@@ -43,12 +49,21 @@ return {
 			-- example: 'foo_|_bar' will match 'foo_' for 'prefix' and 'foo__bar' for 'full'
 			keyword = { range = "full" },
 
-			-- Don't select by default, auto insert on selection
-			list = { selection = { preselect = false, auto_insert = false } },
+				-- Preselect first item for ghost text preview, but don't auto-insert into buffer
+			list = { selection = { preselect = true, auto_insert = false } },
 
 			-- Disable auto brackets
 			-- NOTE: some LSPs may add auto brackets themselves anyway
-			accept = { auto_brackets = { enabled = false } },
+			accept = {
+				auto_brackets = { enabled = false },
+				-- Don't auto-select the first item when menu appears
+			},
+
+			-- Trigger settings - show completions on trigger characters (like .)
+			trigger = {
+				show_on_trigger_character = true,
+				show_on_insert_on_trigger_character = true,
+			},
 
 			menu = {
 				-- Don't automatically show the completion menu
@@ -64,7 +79,7 @@ return {
 			},
 			-- Show documentation when selecting a completion item
 			documentation = { auto_show = true },
-			-- Display a preview of the selected item on the current line
+			-- Display a preview of the selected item on the current line (ghost text)
 			ghost_text = { enabled = true },
 		},
 
