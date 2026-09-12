@@ -4,10 +4,8 @@ vim.lsp.config("ts_ls", {
 	filetypes = {
 		"javascript",
 		"javascriptreact",
-		"javascript.jsx",
 		"typescript",
 		"typescriptreact",
-		"typescript.tsx",
 	},
 	root_dir = function(bufnr, on_dir)
 		if vim.fs.root(0, { "deno.json", "deno.jsonc" }) then

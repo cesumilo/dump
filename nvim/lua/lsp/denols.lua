@@ -54,10 +54,8 @@ vim.lsp.config("denols", {
 	filetypes = {
 		"javascript",
 		"javascriptreact",
-		"javascript.jsx",
 		"typescript",
 		"typescriptreact",
-		"typescript.tsx",
 	},
 	-- root_markers = { 'deno.json', 'deno.jsonc', '.git' },
 	root_dir = function(bufnr, on_dir)
