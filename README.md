@@ -1,145 +1,150 @@
-# Configuration Files Repository
+# dotfiles
 
-This repository contains my personal configuration files for various development tools and applications.
+Personal configuration files for Neovim, Kitty, and Zsh. Optimized for macOS.
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 .
-├── nvim/                    # Neovim configuration
-│   ├── init.lua            # Main entry point
-│   ├── lazy-lock.json      # Plugin lock file
-│   ├── lua/
-│   │   ├── core/           # Core Neovim settings
-│   │   │   ├── config.lua  # Basic editor settings
-│   │   │   ├── mappings.lua # Key mappings
-│   │   │   └── hooks.lua   # Custom hooks
-│   │   ├── config/         # Plugin configurations
-│   │   │   ├── lazy.lua    # Plugin manager setup
-│   │   │   ├── mason.lua   # LSP installer
-│   │   │   └── ...         # Other plugin configs
-│   │   ├── plugins/        # Plugin definitions
-│   │   └── lsp/            # Language server configurations
-│   └── lsp/                # LSP overrides
-├── kitty.conf              # Kitty terminal configuration
+├── nvim/                          # Neovim configuration
+│   ├── init.lua                   # Entry point: bootstraps lazy.nvim
+│   ├── lazy-lock.json             # Locked plugin versions
+│   ├── lsp/                       # LSP overrides (by LSP id)
+│   │   └── lua_ls.lua             # lua-language-server override
+│   └── lua/
+│       ├── core/                  # Core editor settings
+│       │   ├── config.lua         # Basic settings (indentation, theme, line numbers)
+│       │   ├── mappings.lua       # Key mappings
+│       │   └── hooks.lua          # Format-on-save + header autocmds
+│       ├── config/                # Plugin configurations
+│       │   ├── lazy.lua           # lazy.nvim bootstrap and setup
+│       │   ├── mason.lua          # LSPs and tools installed via Mason
+│       │   ├── dap.lua            # Debugging (Godot-Mono/C#, DAP UI, keymaps)
+│       │   ├── header.lua         # File header generation
+│       │   ├── incline.lua        # Bufferline-style status per buffer
+│       │   ├── noice.lua          # UI overhaul (messages, cmdline, hover)
+│       │   ├── nvim-comment.lua   # Comment toggling
+│       │   ├── telescope-ui-select.lua
+│       │   ├── treesitter-context.lua
+│       │   └── markdown-preview.lua
+│       ├── plugins/               # Plugin definitions
+│       │   ├── blink.lua          # Completion (super-tab, ghost text)
+│       │   ├── catppuccin.lua     # Color scheme
+│       │   ├── dap.lua            # nvim-dap + dap-ui + netcoredbg
+│       │   ├── dart.lua           # Dart syntax support
+│       │   ├── header.lua
+│       │   ├── incline.lua
+│       │   ├── indent-blankline.lua
+│       │   ├── lualine.lua        # Status line
+│       │   ├── markdown-preview.lua
+│       │   ├── neoformat.lua      # Formatting
+│       │   ├── noice.lua
+│       │   ├── nvim-comment.lua
+│       │   ├── telescope.lua      # Fuzzy finder
+│       │   ├── telescope-ui-select.lua
+│       │   ├── todo-comments.lua
+│       │   ├── treesitter.lua
+│       │   ├── treesitter-context.lua
+│       │   ├── which-key.lua
+│       │   ├── lsp/
+│       │   │   ├── mason.lua      # lspconfig + Omnisharp + GDScript LSP
+│       │   │   └── flutter.lua    # flutter-tools + Dart debugger config
+│       └── lsp/                   # Custom LSP client configs
+│           ├── denols.lua         # Deno LSP (deno: virtual text documents)
+│           ├── lua_ls.lua
+│           └── ts_ls.lua          # TypeScript LSP (references, source actions)
+├── kitty.conf                     # Kitty terminal configuration
 └── zsh/
-    └── zshrc               # Zsh shell configuration
+    └── zshrc                      # Zsh configuration (oh-my-zsh)
 ```
 
-## 🔧 Configuration Files
+## Neovim
 
-### Neovim Configuration
+A modern Neovim setup written in Lua, managed with lazy.nvim.
 
-A modern Neovim setup written in Lua with lazy.nvim as the plugin manager.
-
-**Key Features:**
-- **Plugin Manager**: Lazy.nvim for efficient plugin management
-- **LSP Support**: Mason.nvim for automatic LSP installation
-- **Theme**: Catppuccin color scheme
-- **File Explorer**: None (using built-in netrw or telescope)
-- **Fuzzy Finder**: Telescope for file search and navigation
-- **Status Line**: Lualine
-- **Treesitter**: Syntax highlighting and parsing
-- **Debugging**: nvim-dap for debugging support
-- **Code Comments**: nvim-comment for easy commenting
-- **Indent Guides**: indent-blankline.nvim
-- **TODO Comments**: todo-comments.nvim
+**Key plugins:**
+- **Plugin manager**: lazy.nvim with automatic update checks
+- **Completion**: blink.cmp (super-tab keymap, ghost text, signature help)
+- **LSP**: nvim-lspconfig + Mason; servers auto-installed via `mason-lspconfig` (lua_ls, denols, ts_ls, terraformls, pyright, rust_analyzer, omnisharp) and tools via `mason-tool-installer` (codelldb, cpptools, pylint, black, stylua, netcoredbg)
+- **Custom LSP configs**: Deno (`deno:` virtual documents), TypeScript (references + source actions), OmniSharp (C#), GDScript (Godot editor on port 6005)
+- **Theme**: Catppuccin
+- **Fuzzy finder**: Telescope with ui-select extension
+- **Status line**: Lualine + Incline (per-buffer status)
+- **UI**: Noice (messages/cmdline/hover), which-key
+- **Treesitter**: with treesitter-context
+- **Formatting**: Neoformat (format-on-save for ts, rs, py, js, json, yaml, lua, sql, tf, dart)
+- **Debugging**: nvim-dap with dap-ui; Godot-Mono launch (netcoredbg) and Dart/Flutter debugger via flutter-tools
+- **Comments**: nvim-comment; **TODO comments**: todo-comments
+- **Indent guides**: indent-blankline
+- **File headers**: header.nvim (auto-updated `date_modified`)
+- **Markdown**: markdown-preview.nvim
+- **Dart/Flutter**: dart-vim-plugin + flutter-tools
+- **File explorer**: none (netrw built-in)
 
 **Setup:**
 ```bash
-# Clone this repository and symlink the nvim directory
 ln -s /path/to/dump/nvim ~/.config/nvim
+nvim --headless "+Lazy! sync" +qa
 ```
 
-### Kitty Terminal
+## Kitty
 
-Kitty terminal emulator configuration with Fira Code font.
+Minimal Kitty terminal configuration:
 
-**Configuration:**
 - **Font**: Fira Code at 14px
-- **Theme**: Built-in (can be customized)
 
-**Setup:**
 ```bash
-# Symlink kitty configuration
 ln -s /path/to/dump/kitty.conf ~/.config/kitty/kitty.conf
 ```
 
-### Zsh Shell
+## Zsh
 
-Zsh configuration with oh-my-zsh framework.
+oh-my-zsh-based configuration:
 
-**Features:**
-- **Theme**: Agnoster theme
-- **Framework**: oh-my-zsh
-- **Plugins**: Various oh-my-zsh plugins
-- **Customization**: User-specific settings and aliases
+- **Theme**: Agnoster with a `prompt_end` override (prompt on a new line)
+- **Plugins**: git
+- **Aliases**: `gitcl` (prune merged branches), `dotenv` / `udotenv` (load/unload `.env`)
+- **Path**: custom `~/.bin`, Neovim binary, `XDG_CONFIG_HOME`
+- **nvim**: `vi` and `vim` aliased to `nvim`
+- **Integration**: loads Fig's pre-script if present; `DEFAULT_USER` hides the hostname in the prompt
 
-**Setup:**
 ```bash
-# Symlink zsh configuration
 ln -s /path/to/dump/zsh/zshrc ~/.zshrc
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
-1. Clone this repository:
-   ```bash
-   git clone <repository-url> ~/.dotfiles
-   ```
+```bash
+git clone git@github.com:cesumilo/dump.git ~/.dotfiles
 
-2. Install and symlink configurations as needed:
-   ```bash
-   # For Neovim
-   mkdir -p ~/.config
-   ln -s ~/.dotfiles/nvim ~/.config/nvim
-   
-   # For Kitty
-   mkdir -p ~/.config/kitty
-   ln -s ~/.dotfiles/kitty.conf ~/.config/kitty/kitty.conf
-   
-   # For Zsh
-   ln -s ~/.dotfiles/zsh/zshrc ~/.zshrc
-   ```
+mkdir -p ~/.config/nvim ~/.config/kitty
+ln -s ~/.dotfiles/nvim ~/.config/nvim
+ln -s ~/.dotfiles/kitty.conf ~/.config/kitty/kitty.conf
+ln -s ~/.dotfiles/zsh/zshrc ~/.zshrc
 
-3. Install Neovim plugins:
-   ```bash
-   nvim --headless "+Lazy! sync" +qa
-   ```
+nvim --headless "+Lazy! sync" +qa
+```
 
-## 📦 Dependencies
+## Dependencies
 
-**Neovim:**
-- Neovim 0.9+ with Lua support
-- Git (for plugin management)
-- Node.js/npm (for some LSP servers)
-- Python (optional, for some plugins)
+- Neovim 0.12+ with Lua support (uses `vim.lsp.config` / `vim.lsp.enable` APIs)
+- Git (plugin management)
+- Node.js/npm (some LSP servers; markdown-preview build)
+- Deno (denols LSP)
+- Rust (rust_analyzer)
+- Godot Mono + netcoredbg (C#/Godot debugging)
+- Flutter SDK (flutter-tools)
+- Kitty, Zsh, oh-my-zsh
 
-**Terminal:**
-- Kitty terminal emulator
+## Maintenance
 
-**Shell:**
-- Zsh
-- oh-my-zsh (optional but recommended)
+- **Update plugins**: `:Lazy update` in Neovim
+- **Add an LSP**: add it to `ensure_installed` in `nvim/lua/config/mason.lua`
+- **Override LSP config**: create `nvim/lua/lsp/<lsp_id>.lua` and require it from `nvim/init.lua`
+- **Add a plugin**: add a file to `nvim/lua/plugins/` (or `plugins/lsp/`)
 
-## 🔄 Maintenance
+## Notes
 
-- **Update plugins**: Run `:Lazy update` in Neovim
-- **Add new LSP**: Add to `nvim/lua/config/mason.lua` in `ensure_installed`
-- **Override LSP config**: Create file in `nvim/lua/lsp/` with LSP name (e.g., `lua_ls.lua`)
-- **Add new plugin**: Add to `nvim/lua/plugins/` directory
-
-## 📝 Notes
-
-- This configuration is optimized for macOS but should work on Linux as well
-- Font settings may need adjustment based on your system
-- Some plugins may require additional system dependencies
-- LSP configurations are automatically installed via Mason
-
-## 🤝 Contributing
-
-This is a personal configuration repository, but feel free to take inspiration or report issues.
-
-## 📄 License
-
-Personal use - feel free to adapt for your own needs.
+- Optimized for macOS; may require adjustments on Linux
+- LSP servers and debuggers are installed automatically via Mason
+- Font settings may need adjustment per system
