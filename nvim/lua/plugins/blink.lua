@@ -30,7 +30,6 @@ return {
 			-- Explicitly prevent <CR> from accepting completion
 			-- This fixes the issue where typing '.' auto-inserts the first completion
 			["<CR>"] = {},
-			["<Tab>"] = { "select_and_accept" },
 		},
 
 		appearance = {

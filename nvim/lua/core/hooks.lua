@@ -11,9 +11,9 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 		"*.yml",
 		"*.lua",
 		"*.sql",
-		"*.lua",
 		"*.tf",
 		"*.tfvars",
+		"*.dart",
 	},
 	command = "silent Neoformat",
 })

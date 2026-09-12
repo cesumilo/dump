@@ -5,6 +5,8 @@ vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 vim.opt.autoindent = true
 
+vim.cmd("filetype plugin indent on")
+
 -- set color scheme
 -- colorscheme catppuccin  catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
 vim.cmd.colorscheme("catppuccin")

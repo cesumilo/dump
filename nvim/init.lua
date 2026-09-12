@@ -11,6 +11,7 @@ require("config.noice")
 require("config.nvim-comment")
 require("config.telescope-ui-select")
 require("config.treesitter-context")
+require("config.markdown-preview")
 
 require("core.config")
 require("core.mappings")
